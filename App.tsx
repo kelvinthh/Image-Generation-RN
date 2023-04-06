@@ -1,11 +1,17 @@
-import { StatusBar } from 'expo-status-bar';
-import { Text, View } from 'react-native';
+import React from 'react';
+import { SafeAreaView, Text } from 'react-native';
+import Header from './src/components/Header';
 
-export default function App() {
+const App = () => {
   return (
-    <View className="flex-1 items-center justify-center bg-black text-white">
-      <Text className='text-white'>Open up App.tsx to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <SafeAreaView className="flex-1 mt-8">
+      <Header />
+      {/* Other components and content */}
+      <>
+      <Text>Hello</Text>
+      </>
+    </SafeAreaView>
   );
-}
+};
+
+export default App;
