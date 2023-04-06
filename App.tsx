@@ -1,18 +1,27 @@
-import React, { useEffect } from 'react';
-import { SafeAreaView } from 'react-native';
-import Header from './src/components/Header';
-import ApiService from './src/lib/ApiService';
-import { API_GET_IMAGES } from '@env';
+import React, { useEffect } from "react";
+import { SafeAreaView } from "react-native";
+import { RecoilRoot, useSetRecoilState } from "recoil";
+import Header from "./src/components/Header";
+import ApiService from "./src/lib/ApiService";
+import { API_GET_IMAGES } from "@env";
+import imageState from "./src/state/imageState";
+import Body from './src/components/Body';
+import { ImageUrl } from './src/types/imageUrl';
 
-const App = () => {
+interface ImageUrlsResponse {
+  imageUrls: ImageUrl[];
+}
+
+
+const AppContent = () => {
+  const setImages = useSetRecoilState(imageState);
+
   useEffect(() => {
-    // Fetch images and log the response JSON
     const fetchImages = async () => {
       try {
-        const response = await ApiService.get(API_GET_IMAGES);
-        console.log(response);
+        const response = await ApiService.get<ImageUrlsResponse>(API_GET_IMAGES);
+        setImages(response.imageUrls);
       } catch (error) {
-        // Handle error, e.g., log the error, show a notification, etc.
         console.error(error);
       }
     };
@@ -20,11 +29,20 @@ const App = () => {
     fetchImages();
   }, []);
 
+  // You can place other components and content here
   return (
-    <SafeAreaView className="flex-1 mt-8">
+    <SafeAreaView className="flex-1 bg-gray-100 mt-8">
       <Header />
-      {/* Other components and content */}
+      <Body />
     </SafeAreaView>
+  );
+};
+
+const App = () => {
+  return (
+    <RecoilRoot>
+      <AppContent />
+    </RecoilRoot>
   );
 };
 
