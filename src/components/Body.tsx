@@ -33,6 +33,7 @@ const Body = () => {
   };
 
   const handleRefreshSuggestion = async () => {
+    setSuggestion("Loading new suggestion...")
     const newSuggestion = await fetchSuggestion();
     setSuggestion(newSuggestion ?? "");
   };

@@ -12,7 +12,7 @@ const Header = () => {
     <View className="flex-row justify-between items-center px-4 py-2">
       <View>
         <Text className="text-xl font-bold">Image Generator by Kelvin Tam</Text>
-        <Text className="text-gray-500">Powered by Open AI</Text>
+        <Text className="text-gray-500">Powered by OpenAI & Azure</Text>
       </View>
       <TouchableOpacity onPress={() => openURL("https://github.com")}>
         <Image source={gitHubIcon} style={{ width: 24, height: 24 }} />
