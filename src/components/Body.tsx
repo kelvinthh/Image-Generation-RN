@@ -4,7 +4,6 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  Image,
   FlatList,
   ListRenderItem,
 } from "react-native";
@@ -13,7 +12,7 @@ import imagesState from "../state/imageState";
 import suggestionState from "../state/suggestionState";
 import { ImageUrl } from "../types/imageUrl";
 import { fetchImages, fetchSuggestion } from "../fetchData";
-// import { fetchImage } from "../utils/fetchImage"; // Import fetchImage from the correct module
+import ImageItem from "../components/ImageItem"; // Import ImageItem component
 
 const Body = () => {
   const images = useRecoilValue(imagesState);
@@ -33,7 +32,7 @@ const Body = () => {
   };
 
   const handleRefreshSuggestion = async () => {
-    setSuggestion("Loading new suggestion...")
+    setSuggestion("Loading new suggestion...");
     const newSuggestion = await fetchSuggestion();
     setSuggestion(newSuggestion ?? "");
   };
@@ -44,41 +43,39 @@ const Body = () => {
   };
 
   const renderItem: ListRenderItem<ImageUrl> = ({ item }) => {
-    return (
-      <View key={item.name}>
-        <Image
-          source={{ uri: item.url }}
-          style={{ width: "100%", height: undefined, aspectRatio: 1 }}
-          resizeMode="cover"
-        />
-      </View>
-    );
+    return <ImageItem item={item} />;
   };
 
   return (
     <View className="flex-1">
       <View className="flex flex-col items-center justify-center mx-4 mb-2">
-        <TextInput
-          className="w-full h-15 bg-white border border-gray-300 rounded p-2"
-          placeholder={suggestion}
-          value={inputValue}
-          onChangeText={(text) => setInputValue(text)}
-          multiline
-          numberOfLines={4}
-          textAlignVertical="top"
-        />
+        <View className="w-full flex flex-row">
+          <TextInput
+            className="flex-1 h-15 bg-white border border-gray-300 rounded p-2"
+            placeholder={suggestion}
+            value={inputValue}
+            onChangeText={(text) => setInputValue(text)}
+            multiline
+            numberOfLines={4}
+            textAlignVertical="top"
+          />
+          <View className="w-2" />
+          <TouchableOpacity
+            className={
+              "h-15 bg-blue-500 rounded text-white text-center px-3 py-2 justify-center items-center"
+            }
+            onPress={handleSubmit}
+            disabled={!inputValue}
+          >
+            <Text>Submit</Text>
+          </TouchableOpacity>
+        </View>
         {inputValue && (
-          <Text className="w-full my-2">How about💡...{suggestion}</Text>
+          <Text className="w-full my-1">
+            How about💡...
+            <Text className="font-light italic">{suggestion}</Text>
+          </Text>
         )}
-        <TouchableOpacity
-          className={`w-full h-10 bg-blue-500 rounded text-white text-center p-2 justify-center items-center ${
-            !inputValue && "mt-2"
-          }`}
-          onPress={handleSubmit}
-          disabled={!inputValue}
-        >
-          <Text>Submit</Text>
-        </TouchableOpacity>
         <TouchableOpacity
           className="w-full h-10 bg-green-500 rounded text-white text-center p-2 my-1 justify-center items-center"
           onPress={handleRefreshSuggestion}
@@ -97,6 +94,7 @@ const Body = () => {
           data={images}
           renderItem={renderItem}
           keyExtractor={(item) => item.name}
+          contentContainerStyle={{ paddingBottom: 180 }}
         />
       </View>
       <TouchableOpacity
