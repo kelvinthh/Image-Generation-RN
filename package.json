@@ -1,11 +1,10 @@
 {
   "name": "img-gen-rn",
   "version": "1.0.0",
-  "main": "node_modules/expo/AppEntry.js",
   "scripts": {
-    "start": "expo start",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
+    "start": "expo start --dev-client",
+    "android": "expo run:android",
+    "ios": "expo run:ios",
     "web": "expo start --web"
   },
   "dependencies": {
@@ -18,7 +17,9 @@
     "react-native-dotenv": "^3.4.8",
     "react-native-toast-message": "^2.1.6",
     "recoil": "^0.7.7",
-    "tailwindcss": "^3.3.1"
+    "tailwindcss": "^3.3.1",
+    "expo-dev-client": "~2.1.6",
+    "expo-splash-screen": "~0.18.1"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
