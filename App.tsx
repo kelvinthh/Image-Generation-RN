@@ -6,6 +6,7 @@ import imageState from "./src/state/imageState";
 import Body from "./src/components/Body";
 import suggestionState from "./src/state/suggestionState";
 import { fetchImages, fetchSuggestion } from "./src/fetchData";
+import { Toast } from 'react-native-toast-message/lib/src/Toast';
 
 const AppContent = () => {
   const setImages = useSetRecoilState(imageState);
@@ -33,6 +34,7 @@ const App = () => {
   return (
     <RecoilRoot>
       <AppContent />
+      <Toast/>
     </RecoilRoot>
   );
 };

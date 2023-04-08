@@ -7,6 +7,7 @@ import {
   FlatList,
   ListRenderItem,
   KeyboardAvoidingView,
+  Keyboard,
 } from "react-native";
 import { useRecoilState } from "recoil";
 import imagesState from "../state/imageState";
@@ -14,6 +15,7 @@ import suggestionState from "../state/suggestionState";
 import { ImageUrl } from "../types/imageUrl";
 import { fetchImages, fetchSuggestion, generateImage } from "../fetchData";
 import ImageItem from "../components/ImageItem";
+import { Toast } from "react-native-toast-message/lib/src/Toast";
 
 const Body = () => {
   const [images, setImages] = useRecoilState(imagesState);
@@ -23,16 +25,46 @@ const Body = () => {
 
   const handleSubmit = async (prompt: string) => {
     console.log("Submitting prompt: ", prompt);
+    Toast.show({
+      type: "info",
+      text1: "Generating...",
+      text2: `DALL‧E is creating ${prompt.slice(0, 20)}...`,
+      position: "bottom",
+    });
     setInputValue("");
-    const res = await generateImage(prompt);
-    // !res ? console.log("Error generating image!") : handleRefreshImage();
-    if (!res) {
-      console.log("Error generating image.");
-    } else {
-      handleRefreshImage();
-      console.log("Image generated!");
+    Keyboard.dismiss(); // Dismiss the keyboard
+  
+    try {
+      const res = await generateImage(prompt);
+      if (!res) {
+        console.log("Error generating image.");
+        Toast.show({
+          type: "error",
+          text1: "Error",
+          text2: "Error generating image",
+          position: "bottom",
+        });
+      } else {
+        Toast.show({
+          type: "success",
+          text1: "Success!",
+          text2: "Your image has been generated!",
+          position: "bottom",
+        });
+        handleRefreshImage();
+        console.log("Image generated!");
+      }
+    } catch (error) {
+      console.error("Error occurred while generating image:", error);
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "An error occurred while generating the image. Please try again later.",
+        position: "bottom",
+      });
     }
   };
+  
 
   const handleUseSuggestion = () => {
     setInputValue(suggestion);
