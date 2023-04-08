@@ -9,7 +9,7 @@ const Header = () => {
   const gitHubIcon = require("../images/25231.png");
 
   return (
-    <View className="flex-row justify-between items-center px-4 py-2">
+    <View className="flex-row bg-white justify-between items-center px-4 py-2">
       <View>
         <Text className="text-xl font-bold">Image Generator by Kelvin Tam</Text>
         <Text className="text-gray-500">Powered by OpenAI & Azure</Text>

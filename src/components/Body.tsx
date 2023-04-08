@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import {
   View,
   Text,
@@ -8,6 +8,7 @@ import {
   ListRenderItem,
   KeyboardAvoidingView,
   Keyboard,
+  RefreshControl,
 } from "react-native";
 import { useRecoilState } from "recoil";
 import imagesState from "../state/imageState";
@@ -22,6 +23,10 @@ const Body = () => {
   const [suggestion, setSuggestion] = useRecoilState(suggestionState);
 
   const [inputValue, setInputValue] = useState("");
+  const [refreshing, setRefreshing] = useState(false);
+
+  // Reference for the FlatList
+  const flatListRef = useRef<FlatList<ImageUrl>>(null);
 
   const handleSubmit = async (prompt: string) => {
     console.log("Submitting prompt: ", prompt);
@@ -33,7 +38,7 @@ const Body = () => {
     });
     setInputValue("");
     Keyboard.dismiss(); // Dismiss the keyboard
-  
+
     try {
       const res = await generateImage(prompt);
       if (!res) {
@@ -51,7 +56,11 @@ const Body = () => {
           text2: "Your image has been generated!",
           position: "bottom",
         });
-        handleRefreshImage();
+        await handleRefreshImage();
+
+        // Scroll the FlatList to the top
+        flatListRef.current?.scrollToOffset({ offset: 0, animated: true });
+
         console.log("Image generated!");
       }
     } catch (error) {
@@ -59,15 +68,22 @@ const Body = () => {
       Toast.show({
         type: "error",
         text1: "Error",
-        text2: "An error occurred while generating the image. Please try again later.",
+        text2:
+          "An error occurred while generating the image. Please try again later.",
         position: "bottom",
       });
     }
   };
-  
 
   const handleUseSuggestion = () => {
     setInputValue(suggestion);
+  };
+
+  // This handle the FlatList swipe up to refresh
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await handleRefreshImage();
+    setRefreshing(false);
   };
 
   const handleRefreshSuggestion = async () => {
@@ -87,10 +103,10 @@ const Body = () => {
 
   return (
     <View className="flex-1">
-      <KeyboardAvoidingView className="flex flex-col items-center justify-center mx-4 mb-2">
+      <KeyboardAvoidingView className="flex flex-col items-center justify-center mx-4 px-2 py-2 mb-2 rounded-lg border-gray-200 border shadow-inner">
         <View className="w-full flex flex-row">
           <TextInput
-            className="flex-1 h-15 bg-white border border-gray-300 rounded p-2"
+            className="flex-1 h-15 bg-white border border-gray-300 rounded-lg p-2"
             placeholder={suggestion}
             value={inputValue}
             onChangeText={(text) => setInputValue(text)}
@@ -130,18 +146,16 @@ const Body = () => {
       </KeyboardAvoidingView>
       <View className="flex flex-col items-center justify-center mx-4">
         <FlatList
+          ref={flatListRef}
           data={images}
           renderItem={renderItem}
           keyExtractor={(item) => item.name}
           contentContainerStyle={{ paddingBottom: 180 }}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
         />
       </View>
-      <TouchableOpacity
-        className="absolute bottom-4 right-4 bg-green-500 rounded text-white text-center p-2 justify-center items-center"
-        onPress={handleRefreshImage}
-      >
-        <Text>Refresh Image</Text>
-      </TouchableOpacity>
     </View>
   );
 };

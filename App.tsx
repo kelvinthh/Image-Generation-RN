@@ -23,7 +23,7 @@ const AppContent = () => {
   }, []);
 
   return (
-    <SafeAreaView className="flex-1 bg-white mt-8">
+    <SafeAreaView className="flex-1">
       <Header />
       <Body />
     </SafeAreaView>

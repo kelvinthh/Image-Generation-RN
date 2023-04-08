@@ -41,7 +41,7 @@ const ImageItem: React.FC<ImageItemProps> = ({ item }) => {
   // console.log(formattedUrl);
 
   return (
-    <View key={item.name}>
+    <View key={item.name} className="py-1">
       {loading && (
         <View className="w-full aspect-square justify-center items-center">
           <ActivityIndicator size="large" color="#000000" />
@@ -63,6 +63,7 @@ const ImageItem: React.FC<ImageItemProps> = ({ item }) => {
           style={{ flex: 1, width: "100%" }}
           resizeMode="cover"
           onLoad={() => setLoading(false)}
+          className="rounded-lg drop-shadow-2xl"
         />
         {showOverlay && (
           <View className="absolute top-0 left-0 right-0 bottom-0 justify-center items-center p-4">
