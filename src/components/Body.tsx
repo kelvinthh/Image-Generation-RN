@@ -8,22 +8,30 @@ import {
   ListRenderItem,
   KeyboardAvoidingView,
 } from "react-native";
-import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import { useRecoilState } from "recoil";
 import imagesState from "../state/imageState";
 import suggestionState from "../state/suggestionState";
 import { ImageUrl } from "../types/imageUrl";
-import { fetchImages, fetchSuggestion } from "../fetchData";
-import ImageItem from "../components/ImageItem"; // Import ImageItem component
+import { fetchImages, fetchSuggestion, generateImage } from "../fetchData";
+import ImageItem from "../components/ImageItem";
 
 const Body = () => {
-  const [images, setImages] = useRecoilState(imagesState)
-  const [suggestion, setSuggestion] = useRecoilState(suggestionState)
+  const [images, setImages] = useRecoilState(imagesState);
+  const [suggestion, setSuggestion] = useRecoilState(suggestionState);
 
   const [inputValue, setInputValue] = useState("");
 
-  const handleSubmit = () => {
-    console.log("Submit:", inputValue);
+  const handleSubmit = async (prompt: string) => {
+    console.log("Submitting prompt: ", prompt);
     setInputValue("");
+    const res = await generateImage(prompt);
+    // !res ? console.log("Error generating image!") : handleRefreshImage();
+    if (!res) {
+      console.log("Error generating image.");
+    } else {
+      handleRefreshImage();
+      console.log("Image generated!");
+    }
   };
 
   const handleUseSuggestion = () => {
@@ -60,13 +68,13 @@ const Body = () => {
           />
           <View className="w-2" />
           <TouchableOpacity
-            className={
-              `h-15 rounded text-center px-3 py-2 justify-center items-center ${!inputValue ? ' bg-blue-200' : 'bg-blue-500'}`
-            }
-            onPress={handleSubmit}
+            className={`h-15 rounded text-center px-3 py-2 justify-center items-center ${
+              !inputValue ? " bg-blue-200" : "bg-blue-500"
+            }`}
+            onPress={() => handleSubmit(inputValue)}
             disabled={!inputValue}
           >
-            <Text className='text-white font-bold'>Submit</Text>
+            <Text className="text-white font-bold">Submit</Text>
           </TouchableOpacity>
         </View>
         {inputValue && (
@@ -79,13 +87,13 @@ const Body = () => {
           className="w-full h-10 bg-green-500 rounded text-center p-2 my-1 justify-center items-center"
           onPress={handleRefreshSuggestion}
         >
-          <Text className='text-white'>Gimme a new suggestion</Text>
+          <Text className="text-white">Gimme a new suggestion</Text>
         </TouchableOpacity>
         <TouchableOpacity
           className="w-full h-10 bg-yellow-600 rounded text-center p-2 justify-center items-center"
           onPress={handleUseSuggestion}
         >
-          <Text className='text-white'>Use suggestion</Text>
+          <Text className="text-white">Use suggestion</Text>
         </TouchableOpacity>
       </KeyboardAvoidingView>
       <View className="flex flex-col items-center justify-center mx-4">

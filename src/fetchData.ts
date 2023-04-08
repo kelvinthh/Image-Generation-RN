@@ -1,5 +1,5 @@
 import ApiService from "./lib/ApiService";
-import { API_GET_IMAGES, API_GET_SUGGESTIONS } from "@env";
+import { API_GET_IMAGES, API_GET_SUGGESTIONS, API_GENERATE_IMAGE } from "@env";
 import { ImageUrl } from "./types/imageUrl";
 
 interface ImageUrlsResponse {
@@ -25,3 +25,23 @@ export const fetchSuggestion = async () => {
     console.log(error);
   }
 };
+
+export const generateImage = async (prompt: string) => {
+  try {
+    const response = await ApiService.post<any>(
+      API_GENERATE_IMAGE,
+      { prompt: prompt },
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    console.log("Generated image.");
+    return {response};
+  } catch (error) {
+    console.error(error);
+    return ""
+  }
+};
+

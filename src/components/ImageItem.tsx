@@ -38,7 +38,7 @@ const ImageItem: React.FC<ImageItemProps> = ({ item }) => {
 
   const sasToken = spacelessUrl.substring(lastSvIndex);
   const formattedUrl = imageFileName + sasToken;
-  console.log(formattedUrl);
+  // console.log(formattedUrl);
 
   return (
     <View key={item.name}>

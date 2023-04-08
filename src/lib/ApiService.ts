@@ -27,8 +27,6 @@ class ApiService {
   public async post<T>(url: string, data?: any, config?: AxiosRequestConfig): Promise<T> {
     return await this.request<T>({ ...config, method: 'POST', url, data });
   }
-
-  // Add more methods for PUT, DELETE, etc., if needed
 }
 
 export default new ApiService();
