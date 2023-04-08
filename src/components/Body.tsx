@@ -6,8 +6,9 @@ import {
   TouchableOpacity,
   FlatList,
   ListRenderItem,
+  KeyboardAvoidingView,
 } from "react-native";
-import { useRecoilValue, useSetRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import imagesState from "../state/imageState";
 import suggestionState from "../state/suggestionState";
 import { ImageUrl } from "../types/imageUrl";
@@ -15,11 +16,9 @@ import { fetchImages, fetchSuggestion } from "../fetchData";
 import ImageItem from "../components/ImageItem"; // Import ImageItem component
 
 const Body = () => {
-  const images = useRecoilValue(imagesState);
-  const suggestion = useRecoilValue(suggestionState);
+  const [images, setImages] = useRecoilState(imagesState)
+  const [suggestion, setSuggestion] = useRecoilState(suggestionState)
 
-  const setImages = useSetRecoilState(imagesState);
-  const setSuggestion = useSetRecoilState(suggestionState);
   const [inputValue, setInputValue] = useState("");
 
   const handleSubmit = () => {
@@ -48,7 +47,7 @@ const Body = () => {
 
   return (
     <View className="flex-1">
-      <View className="flex flex-col items-center justify-center mx-4 mb-2">
+      <KeyboardAvoidingView className="flex flex-col items-center justify-center mx-4 mb-2">
         <View className="w-full flex flex-row">
           <TextInput
             className="flex-1 h-15 bg-white border border-gray-300 rounded p-2"
@@ -62,33 +61,33 @@ const Body = () => {
           <View className="w-2" />
           <TouchableOpacity
             className={
-              "h-15 bg-blue-500 rounded text-white text-center px-3 py-2 justify-center items-center"
+              `h-15 rounded text-center px-3 py-2 justify-center items-center ${!inputValue ? ' bg-blue-200' : 'bg-blue-500'}`
             }
             onPress={handleSubmit}
             disabled={!inputValue}
           >
-            <Text>Submit</Text>
+            <Text className='text-white font-bold'>Submit</Text>
           </TouchableOpacity>
         </View>
         {inputValue && (
           <Text className="w-full my-1">
-            How about💡...
+            Suggestion💡
             <Text className="font-light italic">{suggestion}</Text>
           </Text>
         )}
         <TouchableOpacity
-          className="w-full h-10 bg-green-500 rounded text-white text-center p-2 my-1 justify-center items-center"
+          className="w-full h-10 bg-green-500 rounded text-center p-2 my-1 justify-center items-center"
           onPress={handleRefreshSuggestion}
         >
-          <Text>Gimme a new suggestion</Text>
+          <Text className='text-white'>Gimme a new suggestion</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          className="w-full h-10 bg-yellow-500 rounded text-white text-center p-2 justify-center items-center"
+          className="w-full h-10 bg-yellow-600 rounded text-center p-2 justify-center items-center"
           onPress={handleUseSuggestion}
         >
-          <Text>Use suggestion</Text>
+          <Text className='text-white'>Use suggestion</Text>
         </TouchableOpacity>
-      </View>
+      </KeyboardAvoidingView>
       <View className="flex flex-col items-center justify-center mx-4">
         <FlatList
           data={images}

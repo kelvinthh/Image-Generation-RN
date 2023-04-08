@@ -14,7 +14,7 @@ const Header = () => {
         <Text className="text-xl font-bold">Image Generator by Kelvin Tam</Text>
         <Text className="text-gray-500">Powered by OpenAI & Azure</Text>
       </View>
-      <TouchableOpacity onPress={() => openURL("https://github.com")}>
+      <TouchableOpacity onPress={() => openURL("https://github.com/kelvinthh/Image-Generation-RN")}>
         <Image source={gitHubIcon} style={{ width: 24, height: 24 }} />
       </TouchableOpacity>
     </View>
