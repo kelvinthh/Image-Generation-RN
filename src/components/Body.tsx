@@ -24,16 +24,18 @@ const Body = () => {
 
   const [inputValue, setInputValue] = useState("");
   const [refreshing, setRefreshing] = useState(false);
+  const [generating, setGenerating] = useState(false);
 
   // Reference for the FlatList
   const flatListRef = useRef<FlatList<ImageUrl>>(null);
 
   const handleSubmit = async (prompt: string) => {
+    setGenerating(true);
     console.log("Submitting prompt: ", prompt);
     Toast.show({
       type: "info",
       text1: "Generating...",
-      text2: `DALL‧E is creating ${prompt.slice(0, 20)}...`,
+      text2: `DALL‧E is creating ${prompt.slice(0, 30)}...`,
       position: "bottom",
     });
     setInputValue("");
@@ -46,7 +48,7 @@ const Body = () => {
         Toast.show({
           type: "error",
           text1: "Error",
-          text2: "Error generating image",
+          text2: "Error generating image. Please try again later.",
           position: "bottom",
         });
       } else {
@@ -72,6 +74,8 @@ const Body = () => {
           "An error occurred while generating the image. Please try again later.",
         position: "bottom",
       });
+    } finally {
+      setGenerating(false);
     }
   };
 
@@ -103,7 +107,7 @@ const Body = () => {
 
   return (
     <View className="flex-1">
-      <KeyboardAvoidingView className="flex flex-col items-center justify-center mx-4 px-2 py-2 mb-2 rounded-lg border-gray-200 border shadow-inner">
+      <KeyboardAvoidingView className="flex flex-col items-center justify-center mx-4 px-2 py-2 mb-1 rounded-lg border-gray-200 border shadow-inner">
         <View className="w-full flex flex-row">
           <TextInput
             className="flex-1 h-15 bg-white border border-gray-300 rounded-lg p-2"
@@ -117,17 +121,19 @@ const Body = () => {
           <View className="w-2" />
           <TouchableOpacity
             className={`h-15 rounded text-center px-3 py-2 justify-center items-center ${
-              !inputValue ? " bg-blue-200" : "bg-blue-500"
+              !inputValue || generating ? " bg-fuchsia-200" : "bg-fuchsia-600"
             }`}
-            onPress={() => handleSubmit(inputValue)}
-            disabled={!inputValue}
+            onPress={!generating ? () => handleSubmit(inputValue) : undefined}
+            disabled={!inputValue || generating}
           >
-            <Text className="text-white font-bold">Submit</Text>
+            <Text className="text-white font-bold">
+              {generating ? "Loading..." : "Submit"}
+            </Text>
           </TouchableOpacity>
         </View>
         {inputValue && (
           <Text className="w-full my-1">
-            Suggestion💡
+            <Text className='font-medium'>Suggestion💡</Text>
             <Text className="font-light italic">{suggestion}</Text>
           </Text>
         )}
@@ -135,27 +141,26 @@ const Body = () => {
           className="w-full h-10 bg-green-500 rounded text-center p-2 my-1 justify-center items-center"
           onPress={handleRefreshSuggestion}
         >
-          <Text className="text-white">Gimme a new suggestion</Text>
+          <Text className="text-white">Gimme a new suggestion!</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          className="w-full h-10 bg-yellow-600 rounded text-center p-2 justify-center items-center"
+          className="w-full h-10 bg-blue-500 rounded text-center p-2 justify-center items-center"
           onPress={handleUseSuggestion}
         >
-          <Text className="text-white">Use suggestion</Text>
+          <Text className="text-white">Use suggestion!</Text>
         </TouchableOpacity>
       </KeyboardAvoidingView>
-      <View className="flex flex-col items-center justify-center mx-4">
+      {/* <View className="flex items-center justify-center mx-4"> */}
         <FlatList
           ref={flatListRef}
           data={images}
           renderItem={renderItem}
           keyExtractor={(item) => item.name}
-          contentContainerStyle={{ paddingBottom: 180 }}
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
           }
+          className='mx-4'
         />
-      </View>
     </View>
   );
 };

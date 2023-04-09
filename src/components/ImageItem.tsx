@@ -42,22 +42,22 @@ const ImageItem: React.FC<ImageItemProps> = ({ item }) => {
 
   return (
     <View key={item.name} className="py-1">
-      {loading && (
-        <View className="w-full aspect-square justify-center items-center">
-          <ActivityIndicator size="large" color="#000000" />
-        </View>
-      )}
       <TouchableOpacity
         onPressIn={handleLongPress}
         onPressOut={handleLongPress}
         activeOpacity={1}
         style={{
           width: "100%",
-          // height: undefined,
+          height: undefined,
           aspectRatio: 1,
-          opacity: loading ? 0 : 1,
         }}
       >
+        {loading && (
+          <View className="absolute top-0 left-0 right-0 bottom-0 justify-center items-center p-4 bg-gray-200 rounded-lg">
+            <ActivityIndicator size="large" color="#000000" />
+            <Text className='font-light pt-1'>Loading...</Text>
+          </View>
+        )}
         <Image
           source={{ uri: formattedUrl }}
           style={{ flex: 1, width: "100%" }}
@@ -65,7 +65,7 @@ const ImageItem: React.FC<ImageItemProps> = ({ item }) => {
           onLoad={() => setLoading(false)}
           className="rounded-lg drop-shadow-2xl"
         />
-        {showOverlay && (
+        {!loading && showOverlay && (
           <View className="absolute top-0 left-0 right-0 bottom-0 justify-center items-center p-4">
             <View className="absolute top-0 left-0 right-0 bottom-0 bg-white opacity-70" />
             <Text className="text-lg font-light italic text-center">
@@ -78,4 +78,4 @@ const ImageItem: React.FC<ImageItemProps> = ({ item }) => {
   );
 };
 
-export default ImageItem;
+export default React.memo(ImageItem);
