@@ -23,11 +23,13 @@ This is a mobile version of the [Image Generation Next.js](https://github.com/ke
 
 ## Getting Started 🚀
 
-1. Clone this repository.
+1. Make sure you have the back-end set up, this includes the Azure Functions and Storages from the [main Next.js project](https://github.com/kelvinthh/Image-Generation-Next.js).
 
-2. Install the required dependencies by running `npm install`.
+2. Clone this repository.
 
-3. Create a `.env` file in the project root and configure the required environment variables:
+3. Install the required dependencies by running `npm install`.
+
+4. Create a `.env` file in the project root and configure the required environment variables:
 ```
 REMOTE_HOST=
 API_GET_IMAGES=
@@ -35,9 +37,9 @@ API_GET_SUGGESTIONS=
 API_GENERATE_IMAGE=
 ```
 
-4. Run the app on your preferred platform (iOS or Android) using `npx react-native run-ios` or `npx react-native run-android`.
+5. Run the app on your preferred platform (iOS or Android) using `npx expo run:ios` or `npx expo run:android`.
 
-5. Enjoy generating and exploring images based on your text prompts! 🌈
+6. Enjoy generating and exploring images based on your text prompts! 🌈
 
 ## Additional Information ℹ️
 
