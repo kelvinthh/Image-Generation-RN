@@ -31,10 +31,10 @@ This is a mobile version of the [Image Generation Next.js](https://github.com/ke
 
 4. Create a `.env` file in the project root and configure the required environment variables:
 ```
-REMOTE_HOST=
-API_GET_IMAGES=
-API_GET_SUGGESTIONS=
-API_GENERATE_IMAGE=
+REMOTE_HOST=            // This should be your Azure remote host url
+API_GET_IMAGES=         // getImages API endpoint, e.g. /api/getImages
+API_GET_SUGGESTIONS=    // getChatGPTSuggestion API endpoint
+API_GENERATE_IMAGE=     // generateImage API endpoint
 ```
 
 5. Run the app on your preferred platform (iOS or Android) using `npx expo run:ios` or `npx expo run:android`.
