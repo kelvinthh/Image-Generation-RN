@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { SafeAreaView } from "react-native";
+import { SafeAreaView, StatusBar } from "react-native";
 import { RecoilRoot, useRecoilState, useSetRecoilState } from "recoil";
 import Header from "./src/components/Header";
 import imageState from "./src/state/imageState";
@@ -17,12 +17,8 @@ const AppContent = () => {
 
   useEffect(() => {
     const unsubscribe = NetInfo.addEventListener((state) => {
-      if (state.isInternetReachable !== hasInternet) {
-        console.log(
-          `Internet state: ${state.type} ${state.isInternetReachable}`
-        );
-        setHasInternet(state.isInternetReachable);
-      }
+      console.log(`Internet state: ${state.type} ${state.isInternetReachable}`);
+      setHasInternet(state.isInternetReachable);
     });
 
     return () => {
@@ -44,6 +40,7 @@ const AppContent = () => {
     <SafeAreaView className="flex-1">
       <Header />
       <Body />
+      <StatusBar barStyle={'dark-content'}/>
     </SafeAreaView>
   );
 };

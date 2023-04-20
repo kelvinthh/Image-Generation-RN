@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   View,
   Text,
@@ -30,6 +30,25 @@ const Body = () => {
 
   // Reference for the FlatList
   const flatListRef = useRef<FlatList<ImageUrl>>(null);
+  const isFirstRender = useRef(true);
+
+  useEffect(() => {
+
+    // Prevent the toast pop up on the first render
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+
+    if (!hasInternet) {
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "No internet connection.",
+        position: "bottom",
+      });
+    }
+  }, [hasInternet]);
 
   const handleSubmit = async (prompt: string) => {
     setGenerating(true);
@@ -99,6 +118,7 @@ const Body = () => {
   };
 
   const handleRefreshImage = async () => {
+    if (!hasInternet) return;
     const newImages = await fetchImages();
     setImages(newImages ?? []);
   };
@@ -123,7 +143,9 @@ const Body = () => {
           <View className="w-2" />
           <TouchableOpacity
             className={`h-15 rounded text-center px-3 py-2 justify-center items-center ${
-              !inputValue || generating ? " bg-fuchsia-200" : "bg-fuchsia-600"
+              !inputValue || generating || !hasInternet
+                ? " bg-fuchsia-200"
+                : "bg-fuchsia-600"
             }`}
             onPress={!generating ? () => handleSubmit(inputValue) : undefined}
             disabled={!inputValue || generating || !hasInternet}
@@ -133,14 +155,18 @@ const Body = () => {
             </Text>
           </TouchableOpacity>
         </View>
-        {inputValue && (suggestion || hasInternet) && (
-          <Text className="w-full my-1">
-            <Text className="font-medium">Suggestion💡</Text>
-            <Text className="font-light italic">{suggestion}</Text>
-          </Text>
-        )}
+        {inputValue &&
+          !inputValue.includes(suggestion) &&
+          (suggestion || hasInternet) && (
+            <Text className="w-full my-1">
+              <Text className="font-medium">Suggestion💡</Text>
+              <Text className="font-light italic">{suggestion}</Text>
+            </Text>
+          )}
         <TouchableOpacity
-          className="w-full h-10 bg-green-500 rounded text-center p-2 my-1 justify-center items-center"
+          className={`w-full h-10 ${
+            hasInternet ? "bg-green-500" : "bg-green-200"
+          } rounded text-center p-2 my-1 justify-center items-center`}
           onPress={handleRefreshSuggestion}
           disabled={!hasInternet}
         >
@@ -152,29 +178,22 @@ const Body = () => {
         >
           <Text className="text-white">Use suggestion!</Text>
         </TouchableOpacity>
-        {!hasInternet && (
+        {(!hasInternet && !isFirstRender.current) && (
           <Text className="w-full my-1 text-red-500 font-light italic">
-            ⛔️ Error: No internet...
+            ⛔️ Error: No internet connection.
           </Text>
         )}
       </KeyboardAvoidingView>
-      {/* <View className="flex items-center justify-center mx-4"> */}
-      {!hasInternet && !images ? (
-        <View className="flex-1 flex-col bg-red-400 w-full h-full items-center justify-center">
-          <Text>⛔️ Unable to connect to the internet...</Text>
-        </View>
-      ) : (
-        <FlatList
-          ref={flatListRef}
-          data={images}
-          renderItem={renderItem}
-          keyExtractor={(item) => item.name}
-          refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-          }
-          className="mx-4"
-        />
-      )}
+      <FlatList
+        ref={flatListRef}
+        data={images}
+        renderItem={renderItem}
+        keyExtractor={(item) => item.name}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+        className="mx-4"
+      />
     </View>
   );
 };
