@@ -1,8 +1,8 @@
-import { atom } from 'recoil';
-import { ImageUrl } from '../types/imageUrl';
+import { atom } from "recoil";
+import { ImageUrl } from "../types/imageUrl";
 
 const imagesState = atom<ImageUrl[]>({
-  key: 'imagesState',
+  key: "imagesState",
   default: [],
 });
 

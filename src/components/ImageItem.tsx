@@ -55,7 +55,7 @@ const ImageItem: React.FC<ImageItemProps> = ({ item }) => {
         {loading && (
           <View className="absolute top-0 left-0 right-0 bottom-0 justify-center items-center p-4 bg-gray-200 rounded-lg">
             <ActivityIndicator size="large" color="#000000" />
-            <Text className='font-light pt-1'>Loading...</Text>
+            <Text className="font-light pt-1">Loading...</Text>
           </View>
         )}
         <Image

@@ -10,13 +10,14 @@ import {
   Keyboard,
   RefreshControl,
 } from "react-native";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import imagesState from "../state/imageState";
 import suggestionState from "../state/suggestionState";
 import { ImageUrl } from "../types/imageUrl";
 import { fetchImages, fetchSuggestion, generateImage } from "../fetchData";
 import ImageItem from "../components/ImageItem";
 import { Toast } from "react-native-toast-message/lib/src/Toast";
+import internetState from "../state/internetState";
 
 const Body = () => {
   const [images, setImages] = useRecoilState(imagesState);
@@ -25,6 +26,7 @@ const Body = () => {
   const [inputValue, setInputValue] = useState("");
   const [refreshing, setRefreshing] = useState(false);
   const [generating, setGenerating] = useState(false);
+  const hasInternet = useRecoilValue(internetState);
 
   // Reference for the FlatList
   const flatListRef = useRef<FlatList<ImageUrl>>(null);
@@ -124,22 +126,23 @@ const Body = () => {
               !inputValue || generating ? " bg-fuchsia-200" : "bg-fuchsia-600"
             }`}
             onPress={!generating ? () => handleSubmit(inputValue) : undefined}
-            disabled={!inputValue || generating}
+            disabled={!inputValue || generating || !hasInternet}
           >
             <Text className="text-white font-bold">
               {generating ? "Loading..." : "Submit"}
             </Text>
           </TouchableOpacity>
         </View>
-        {inputValue && (
+        {inputValue && (suggestion || hasInternet) && (
           <Text className="w-full my-1">
-            <Text className='font-medium'>Suggestion💡</Text>
+            <Text className="font-medium">Suggestion💡</Text>
             <Text className="font-light italic">{suggestion}</Text>
           </Text>
         )}
         <TouchableOpacity
           className="w-full h-10 bg-green-500 rounded text-center p-2 my-1 justify-center items-center"
           onPress={handleRefreshSuggestion}
+          disabled={!hasInternet}
         >
           <Text className="text-white">Gimme a new suggestion!</Text>
         </TouchableOpacity>
@@ -149,8 +152,18 @@ const Body = () => {
         >
           <Text className="text-white">Use suggestion!</Text>
         </TouchableOpacity>
+        {!hasInternet && (
+          <Text className="w-full my-1 text-red-500 font-light italic">
+            ⛔️ Error: No internet...
+          </Text>
+        )}
       </KeyboardAvoidingView>
       {/* <View className="flex items-center justify-center mx-4"> */}
+      {!hasInternet && !images ? (
+        <View className="flex-1 flex-col bg-red-400 w-full h-full items-center justify-center">
+          <Text>⛔️ Unable to connect to the internet...</Text>
+        </View>
+      ) : (
         <FlatList
           ref={flatListRef}
           data={images}
@@ -159,8 +172,9 @@ const Body = () => {
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
           }
-          className='mx-4'
+          className="mx-4"
         />
+      )}
     </View>
   );
 };
