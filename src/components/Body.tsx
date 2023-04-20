@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   View,
   Text,
@@ -10,13 +10,14 @@ import {
   Keyboard,
   RefreshControl,
 } from "react-native";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import imagesState from "../state/imageState";
 import suggestionState from "../state/suggestionState";
 import { ImageUrl } from "../types/imageUrl";
 import { fetchImages, fetchSuggestion, generateImage } from "../fetchData";
 import ImageItem from "../components/ImageItem";
 import { Toast } from "react-native-toast-message/lib/src/Toast";
+import internetState from "../state/internetState";
 
 const Body = () => {
   const [images, setImages] = useRecoilState(imagesState);
@@ -25,9 +26,29 @@ const Body = () => {
   const [inputValue, setInputValue] = useState("");
   const [refreshing, setRefreshing] = useState(false);
   const [generating, setGenerating] = useState(false);
+  const hasInternet = useRecoilValue(internetState);
 
   // Reference for the FlatList
   const flatListRef = useRef<FlatList<ImageUrl>>(null);
+  const isFirstRender = useRef(true);
+
+  useEffect(() => {
+
+    // Prevent the toast pop up on the first render
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+
+    if (!hasInternet) {
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "No internet connection.",
+        position: "bottom",
+      });
+    }
+  }, [hasInternet]);
 
   const handleSubmit = async (prompt: string) => {
     setGenerating(true);
@@ -97,6 +118,7 @@ const Body = () => {
   };
 
   const handleRefreshImage = async () => {
+    if (!hasInternet) return;
     const newImages = await fetchImages();
     setImages(newImages ?? []);
   };
@@ -121,25 +143,32 @@ const Body = () => {
           <View className="w-2" />
           <TouchableOpacity
             className={`h-15 rounded text-center px-3 py-2 justify-center items-center ${
-              !inputValue || generating ? " bg-fuchsia-200" : "bg-fuchsia-600"
+              !inputValue || generating || !hasInternet
+                ? " bg-fuchsia-200"
+                : "bg-fuchsia-600"
             }`}
             onPress={!generating ? () => handleSubmit(inputValue) : undefined}
-            disabled={!inputValue || generating}
+            disabled={!inputValue || generating || !hasInternet}
           >
             <Text className="text-white font-bold">
               {generating ? "Loading..." : "Submit"}
             </Text>
           </TouchableOpacity>
         </View>
-        {inputValue && (
-          <Text className="w-full my-1">
-            <Text className='font-medium'>Suggestion💡</Text>
-            <Text className="font-light italic">{suggestion}</Text>
-          </Text>
-        )}
+        {inputValue &&
+          !inputValue.includes(suggestion) &&
+          (suggestion || hasInternet) && (
+            <Text className="w-full my-1">
+              <Text className="font-medium">Suggestion💡</Text>
+              <Text className="font-light italic">{suggestion}</Text>
+            </Text>
+          )}
         <TouchableOpacity
-          className="w-full h-10 bg-green-500 rounded text-center p-2 my-1 justify-center items-center"
+          className={`w-full h-10 ${
+            hasInternet ? "bg-green-500" : "bg-green-200"
+          } rounded text-center p-2 my-1 justify-center items-center`}
           onPress={handleRefreshSuggestion}
+          disabled={!hasInternet}
         >
           <Text className="text-white">Gimme a new suggestion!</Text>
         </TouchableOpacity>
@@ -149,18 +178,22 @@ const Body = () => {
         >
           <Text className="text-white">Use suggestion!</Text>
         </TouchableOpacity>
+        {(!hasInternet && !isFirstRender.current) && (
+          <Text className="w-full my-1 text-red-500 font-light italic">
+            ⛔️ Error: No internet connection.
+          </Text>
+        )}
       </KeyboardAvoidingView>
-      {/* <View className="flex items-center justify-center mx-4"> */}
-        <FlatList
-          ref={flatListRef}
-          data={images}
-          renderItem={renderItem}
-          keyExtractor={(item) => item.name}
-          refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-          }
-          className='mx-4'
-        />
+      <FlatList
+        ref={flatListRef}
+        data={images}
+        renderItem={renderItem}
+        keyExtractor={(item) => item.name}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+        className="mx-4"
+      />
     </View>
   );
 };

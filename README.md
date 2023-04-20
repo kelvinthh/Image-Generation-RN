@@ -36,10 +36,11 @@ API_GET_IMAGES=         // getImages API endpoint, e.g. /api/getImages
 API_GET_SUGGESTIONS=    // getChatGPTSuggestion API endpoint
 API_GENERATE_IMAGE=     // generateImage API endpoint
 ```
+5. Download **Expo Go** app from Google Play/App Store, run `npx expo start` in the terminal to start the development server,  then scan the QR Code within Expo Go app or your phone's camera app.
 
-5. Run the app on your preferred platform (iOS or Android) using `npx expo run:ios` or `npx expo run:android`.
+6. Or to build the app, run the app on your preferred platform (iOS or Android) using `npx expo run:ios` or `npx expo run:android`.
 
-6. Enjoy generating and exploring images based on your text prompts! 🌈
+7. Enjoy generating and exploring images based on your text prompts! 🌈
 
 ## Additional Information ℹ️
 
