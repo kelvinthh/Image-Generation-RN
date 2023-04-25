@@ -18,6 +18,7 @@ import { fetchImages, fetchSuggestion, generateImage } from "../fetchData";
 import ImageItem from "../components/ImageItem";
 import { Toast } from "react-native-toast-message/lib/src/Toast";
 import internetState from "../state/internetState";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Body = () => {
   const [images, setImages] = useRecoilState(imagesState);
@@ -32,8 +33,10 @@ const Body = () => {
   const flatListRef = useRef<FlatList<ImageUrl>>(null);
   const isFirstRender = useRef(true);
 
-  useEffect(() => {
+  // AsyncStorage key
+  const LAST_GENERATED_TIME_KEY = "lastGeneratedTime";
 
+  useEffect(() => {
     // Prevent the toast pop up on the first render
     if (isFirstRender.current) {
       isFirstRender.current = false;
@@ -50,7 +53,35 @@ const Body = () => {
     }
   }, [hasInternet]);
 
+  async function setLastGeneratedTime() {
+    const currentTime = new Date().getTime();
+    await AsyncStorage.setItem(
+      LAST_GENERATED_TIME_KEY,
+      JSON.stringify(currentTime)
+    );
+  }
+
+  async function getLastGeneratedTime() {
+    const lastGeneratedTime = await AsyncStorage.getItem(
+      LAST_GENERATED_TIME_KEY
+    );
+    return lastGeneratedTime ? JSON.parse(lastGeneratedTime) : null;
+  }
+
   const handleSubmit = async (prompt: string) => {
+    const lastGeneratedTime = await getLastGeneratedTime();
+    const currentTime = new Date().getTime();
+
+    if (lastGeneratedTime && currentTime - lastGeneratedTime < 10000) {
+      Toast.show({
+        type: "info",
+        text1: "Please wait",
+        text2: "You can generate an image every 10 seconds.",
+        position: "bottom",
+      });
+      return;
+    }
+
     setGenerating(true);
     console.log("Submitting prompt: ", prompt);
     Toast.show({
@@ -79,6 +110,8 @@ const Body = () => {
           text2: "Your image has been generated!",
           position: "bottom",
         });
+
+        await setLastGeneratedTime();
         await handleRefreshImage();
 
         // Scroll the FlatList to the top
@@ -178,7 +211,7 @@ const Body = () => {
         >
           <Text className="text-white">Use suggestion!</Text>
         </TouchableOpacity>
-        {(!hasInternet && !isFirstRender.current) && (
+        {!hasInternet && !isFirstRender.current && (
           <Text className="w-full my-1 text-red-500 font-light italic">
             ⛔️ Error: No internet connection.
           </Text>
