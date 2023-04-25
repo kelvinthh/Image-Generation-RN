@@ -21,6 +21,15 @@ This is a mobile version of the [Image Generation Next.js](https://github.com/ke
 - Azure Functions for back-end hosting
 - Azure Storage for storing images
 
+## Third-Party Libraries Used 📚
+- [Axios](https://axios-http.com/)
+- [react-native-toast-message](https://github.com/calintamas/react-native-toast-message)
+- [NativeWind](https://github.com/marklawlor/nativewind)
+- [Tailwind CSS](https://tailwindcss.com/)
+- [React Native Async Storage](https://github.com/react-native-async-storage/async-storage)
+- [react-native-dotenv](https://github.com/goatandsheep/react-native-dotenv)
+- [Recoil](https://recoiljs.org/)
+
 ## Getting Started 🚀
 
 1. Make sure you have the back-end set up, this includes the Azure Functions and Storages from the [main Next.js project](https://github.com/kelvinthh/Image-Generation-Next.js).
