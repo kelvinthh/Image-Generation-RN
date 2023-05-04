@@ -12,21 +12,21 @@ interface ImageItemProps {
   item: ImageUrl;
 }
 
+const hasNonAsciiCharacters = (str: string): boolean => {
+  for (let i = 0; i < str.length; i++) {
+    if (str.charCodeAt(i) > 127) {
+      return true;
+    }
+  }
+  return false;
+};
+
 const ImageItem: React.FC<ImageItemProps> = ({ item }) => {
   const [loading, setLoading] = useState(true);
   const [showOverlay, setShowOverlay] = useState(false);
 
   const handleLongPress = () => {
     setShowOverlay(!showOverlay);
-  };
-
-  const hasNonAsciiCharacters = (str: string): boolean => {
-    for (let i = 0; i < str.length; i++) {
-      if (str.charCodeAt(i) > 127) {
-        return true;
-      }
-    }
-    return false;
   };
 
   const spacelessUrl = item.url.replace(/ /g, "%20");
@@ -38,7 +38,6 @@ const ImageItem: React.FC<ImageItemProps> = ({ item }) => {
 
   const sasToken = spacelessUrl.substring(lastSvIndex);
   const formattedUrl = imageFileName + sasToken;
-  // console.log(formattedUrl);
 
   return (
     <View key={item.name} className="py-1">
