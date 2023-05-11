@@ -16,17 +16,14 @@ const AppContent = () => {
   const [hasInternet, setHasInternet] = useRecoilState(internetState);
 
   useEffect(() => {
+
+    // Internet check
     const unsubscribe = NetInfo.addEventListener((state) => {
       console.log(`Internet state: ${state.type} ${state.isInternetReachable}`);
       setHasInternet(state.isInternetReachable);
     });
 
-    return () => {
-      unsubscribe();
-    };
-  }, []);
-
-  useEffect(() => {
+    // Fetch getImages and prompt suggestion
     (async () => {
       const images = await fetchImages();
       const suggestion = await fetchSuggestion();
@@ -34,13 +31,17 @@ const AppContent = () => {
       setImages(images ?? []); // Provide an empty array as the default value
       setSuggestion(suggestion ?? ""); // Provide an empty string as the default value
     })();
+
+    return () => {
+      unsubscribe();  // Stop internet connection check on unmount
+    };
   }, []);
 
   return (
     <SafeAreaView className="flex-1">
       <Header />
       <Body />
-      <StatusBar barStyle={'dark-content'}/>
+      <StatusBar barStyle={"dark-content"} />
     </SafeAreaView>
   );
 };
