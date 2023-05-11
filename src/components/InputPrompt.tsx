@@ -15,17 +15,17 @@ import Toast from "react-native-toast-message";
 import { fetchImages, fetchSuggestion, generateImage } from "../fetchData";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import imagesState from "../state/imageState";
-import { ImageUrl } from '../types/imageUrl';
+import { ImageUrl } from "../types/imageUrl";
 
 interface InputPromptProps {
-    flatListRef: React.RefObject<FlatList<ImageUrl>>,
-    isFirstRender: React.MutableRefObject<boolean>
+  flatListRef: React.RefObject<FlatList<ImageUrl>>;
+  isFirstRender: React.MutableRefObject<boolean>;
 }
 
 const InputPrompt: React.FC<InputPromptProps> = ({
-    flatListRef,
-    isFirstRender,
-  })=> {
+  flatListRef,
+  isFirstRender,
+}) => {
   const setImages = useSetRecoilState(imagesState);
   const [suggestion, setSuggestion] = useRecoilState(suggestionState);
   const [inputValue, setInputValue] = useState("");
