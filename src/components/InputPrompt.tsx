@@ -70,7 +70,7 @@ const InputPrompt: React.FC<InputPromptProps> = ({
     const lastGeneratedTime = await getLastGeneratedTime();
     const currentTime = new Date().getTime();
 
-    if (lastGeneratedTime && currentTime - lastGeneratedTime < 10000) {
+    if (lastGeneratedTime && currentTime - lastGeneratedTime < 30000) {
       Toast.show({
         type: "info",
         text1: "Please wait",
@@ -132,8 +132,8 @@ const InputPrompt: React.FC<InputPromptProps> = ({
   };
 
   return (
-    <KeyboardAvoidingView className="flex flex-col items-center justify-center mx-4 px-2 py-2 mb-1 rounded-lg border-gray-200 border shadow-inner">
-      <View className="w-full flex flex-row">
+    <KeyboardAvoidingView className="flex flex-col items-center justify-center mx-4 px-2 py-2 mb-1 rounded-lg bg-white shadow-md">
+      <View className="w-full flex flex-row space-x-2">
         <TextInput
           className="flex-1 h-15 bg-white border border-gray-300 rounded-lg p-2"
           placeholder={suggestion}
@@ -143,7 +143,7 @@ const InputPrompt: React.FC<InputPromptProps> = ({
           numberOfLines={4}
           textAlignVertical="top"
         />
-        <View className="w-2" />
+        {/* Submit Button */}
         <TouchableOpacity
           className={`h-15 rounded text-center px-3 py-2 justify-center items-center ${
             !inputValue || generating || !hasInternet
@@ -158,6 +158,8 @@ const InputPrompt: React.FC<InputPromptProps> = ({
           </Text>
         </TouchableOpacity>
       </View>
+
+      {/* Suggestion Text */}
       {inputValue &&
         !inputValue.includes(suggestion) &&
         (suggestion || hasInternet) && (
@@ -166,20 +168,26 @@ const InputPrompt: React.FC<InputPromptProps> = ({
             <Text className="font-light italic">{suggestion}</Text>
           </Text>
         )}
+      
+      {/* New Suggestion Button */}
       <TouchableOpacity
         className={`w-full h-10 ${
           hasInternet ? "bg-green-500" : "bg-green-200"
-        } rounded text-center p-2 my-1 justify-center items-center`}
+        } rounded text-center p-2 mt-2 mb-1 justify-center items-center`}
         onPress={handleRefreshSuggestion}
         disabled={!hasInternet}
       >
         <Text className="text-white">Gimme a new suggestion!</Text>
       </TouchableOpacity>
+
+      {/* Use Suggestion Button */}
       <TouchableOpacity
         className="w-full h-10 bg-blue-500 rounded text-center p-2 justify-center items-center"
         onPress={handleUseSuggestion}
       >
         <Text className="text-white">Use suggestion!</Text>
+
+      {/* Submit Button */}
       </TouchableOpacity>
       {!hasInternet && !isFirstRender.current && (
         <Text className="w-full my-1 text-red-500 font-light italic">

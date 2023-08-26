@@ -1,10 +1,8 @@
 import React from "react";
 import { View, Text, Linking, TouchableOpacity, Image } from "react-native";
+import openURL from '../lib/Util';
 
 const Header = () => {
-  const openURL = (url: string) => {
-    Linking.openURL(url);
-  };
 
   const gitHubIcon = require("../images/25231.png");
 
