@@ -12,7 +12,7 @@ export const fetchImages = async () => {
     response.imageUrls && console.log("Fetched images");
     return response.imageUrls;
   } catch (error) {
-    console.error(error);
+    console.error("Fetch Images", error);
   }
 };
 
@@ -22,7 +22,7 @@ export const fetchSuggestion = async () => {
     response && console.log("Fetched suggestion.");
     return response.trim();
   } catch (error) {
-    console.log(error);
+    console.log("Fetch Suggestion", error);
   }
 };
 
