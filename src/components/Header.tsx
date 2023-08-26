@@ -1,15 +1,23 @@
 import React from "react";
 import { View, Text, Linking, TouchableOpacity, Image } from "react-native";
-import openURL from '../lib/Util';
+import openURL from "../lib/Util";
+import { WEBSITE } from "@env";
 
 const Header = () => {
-
   const gitHubIcon = require("../images/25231.png");
 
   return (
     <View className="flex-row bg-white justify-between items-center px-4 py-2">
       <View>
-        <Text className="text-xl font-bold">Image Generator by Kelvin Tam</Text>
+        <Text className="text-xl font-bold">
+          Image Generator by{" "}
+          <Text
+            onPress={() => openURL(WEBSITE)}
+            className="underline font-extrabold text-blue-700"
+          >
+            Kelvin Tam
+          </Text>
+        </Text>
         <Text className="text-gray-500">Powered by OpenAI & Azure</Text>
       </View>
       <TouchableOpacity

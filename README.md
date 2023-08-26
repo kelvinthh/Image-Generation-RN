@@ -44,6 +44,7 @@ REMOTE_HOST=            // This should be your Azure remote host url
 API_GET_IMAGES=         // getImages API endpoint, e.g. /api/getImages
 API_GET_SUGGESTIONS=    // getChatGPTSuggestion API endpoint
 API_GENERATE_IMAGE=     // generateImage API endpoint
+WEBSITE=                // URL to website
 ```
 5. Download **Expo Go** app from Google Play/App Store, run `npx expo start` in the terminal to start the development server,  then scan the QR Code within Expo Go app or your phone's camera app.
 
